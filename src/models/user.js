@@ -1,5 +1,5 @@
 module.exports = (sequelize,DataTypes)=>{
-    const Collection = sequelize.define('User' , {
+    const User = sequelize.define('User' , {
         id: {
             type:DataTypes.UUID,
             primaryKey:true,

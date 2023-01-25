@@ -3,7 +3,7 @@ const express = require('express');
 require('dotenv').config();
 
 const {synchronization} = require('./models');
-const router = require('./route/index')
+const router = require('./route/index');
 
 const app = express();
 
