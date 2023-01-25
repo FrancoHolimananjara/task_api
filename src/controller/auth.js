@@ -2,6 +2,10 @@ const db = require('../models');
 const User = db.User;
 const { Op } = require('sequelize');
 
+const hashData = require('../utils/hashData');
+const compareData = require('../utils/compareData');
+const generateToken = require('../utils/generateToken');
+
 const register = async (req, res) => {
     try {
         const user = await create(req.body);
@@ -18,10 +22,9 @@ const login = async (req, res) => {
         const { pseudo, mdp } = req.body;
         const user = await User.findOne({ where: { pseudo } });
         if (user) {
-            if (mdp === user.mdp) {
-                res.status(200).json({
-                    message:"Connecté"
-                })
+            if (await compareData(mdp, user.mdp)) {
+                const token = generateToken(user);
+                res.status(200).json({token});
             } else {
                 res.status(400).json({
                     message:"Mot de passe invalide"
@@ -48,7 +51,8 @@ async function create(data) {
         if (user) {
             throw new Error("Utilisateur déjà existé");
         } else {
-            const newUser = await User.create({ pseudo, email, mdp });
+            const hashedPass = await hashData(mdp);
+            const newUser = await User.create({ pseudo, email, mdp:hashedPass });
             return newUser;
         }
     }
