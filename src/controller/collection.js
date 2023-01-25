@@ -3,12 +3,13 @@ const Collection = db.Collection;
 const Task = db.Task;
 const create = async(req,res)=>{
     try {
+        const { id, pseudo } = req.user;
+        console.log(pseudo);
         const { nom }=req.body;
-
         // verifer s'il existe déjà
         const existingColleciton = await Collection.findOne({where:{nom}});
         if (!existingColleciton) {
-            const collection = await Collection.create({nom});
+            const collection = await Collection.create({nom,userId:id});
             await collection.save();
             res.status(201).json({
                 message:"Collection ajouté",
@@ -54,7 +55,7 @@ const getById = async(req,res)=>{
     try {
         const { id } = req.params;
         const collection = await Collection.findOne({
-            where:{id} , 
+            where:{id} ,
             include:[
             {
                 model:Task,
